@@ -21,11 +21,16 @@ const cartCountEl = document.getElementById('cart-count');
 const whatsappButton = document.getElementById('whatsapp-button');
 const contactForm = document.getElementById('contact-form');
 const formStatus  = document.getElementById('form-status');
+ codex/add-loading-spinner-finalizar-compra
 const checkoutStatus = document.getElementById('checkout-status');
 const preferenceEndpointAttr = checkoutBtn?.dataset.preferenceEndpoint?.trim();
 const MP_PREFERENCE_ENDPOINT = preferenceEndpointAttr && preferenceEndpointAttr.startsWith('http')
     ? preferenceEndpointAttr
     : 'https://copia-gkyz.onrender.com/api/checkout/preferences';
+
+const HEALTH_ENDPOINT = 'https://copia-gkyz.onrender.com/health';
+const MP_PREFERENCE_ENDPOINT = 'https://copia-gkyz.onrender.com/api/checkout/preferences';
+ main
 const MP_STATIC_PREFERENCE_ID = (checkoutBtn?.dataset.preferenceId || '').trim() || window.MP_PREFERENCE_ID || '';
 const MP_PUBLIC_KEY = 'APP_USR-9a5c032a-aac2-47c7-8215-6f28b0fab4a2';
 const CHECKOUT_TIMEOUT_MS = 40000;
@@ -232,6 +237,10 @@ function openCart() {
         cartDrawer.setAttribute('aria-hidden', 'false');
         cartOverlay.classList.add('open');
         document.body.classList.add('cart-open');
+    }
+
+    if (HEALTH_ENDPOINT) {
+        fetch(HEALTH_ENDPOINT).catch(() => {});
     }
 }
 
