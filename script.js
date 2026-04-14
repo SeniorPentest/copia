@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const targets = document.querySelectorAll(
         '.snack-card, .value-card, .program-card, .plan-card, ' +
         '.channel-card, .loyalty-text, .loyalty-visual, ' +
-        '.compliance-text, .compliance-seals, ' +
+        '.compliance-text, .compliance-seals, .testimonial-card, ' +
         '.contact-info, .contact-form, .section-header'
     );
     targets.forEach(el => {
