@@ -63,8 +63,12 @@ const MP_STATIC_PREFERENCE_ID = (checkoutBtn?.dataset.preferenceId || '').trim()
 const MP_PUBLIC_KEY = 'APP_USR-9a5c032a-aac2-47c7-8215-6f28b0fab4a2';
 const CHECKOUT_TIMEOUT_MS = 40000;
 const WHATSAPP_NUMBER = '5511915723418';
+ codex/add-whatsapp-floating-button-again
+const WHATSAPP_MESSAGE = 'Olá! Vim pelo site da VieFive e gostaria de saber mais sobre os produtos.';
+
 const checkoutBtnLabel = checkoutBtn ? checkoutBtn.querySelector('.btn-label') : null;
 const defaultCheckoutLabel = checkoutBtnLabel?.textContent.trim() || checkoutBtn?.textContent.trim() || 'Finalizar Compra';
+ main
  main
 let cart = [];
 let mpInstance = null;
@@ -620,8 +624,17 @@ function setupCheckoutButton() {
 
 function setupWhatsappButton() {
     if (!whatsappButton) return;
+
+    const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+    whatsappButton.setAttribute('href', whatsappLink);
+    whatsappButton.setAttribute('target', '_blank');
+    whatsappButton.setAttribute('rel', 'noopener noreferrer');
+
     whatsappButton.addEventListener('click', (e) => {
         e.preventDefault();
+ codex/add-whatsapp-floating-button-again
+        window.open(whatsappLink, '_blank');
+
         if (!whatsappNumber) {
             alert('Número de WhatsApp não configurado. Atualize o config.js.');
             return;
@@ -635,6 +648,7 @@ function setupWhatsappButton() {
             : `Olá! ${summary}`;
         const link = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
         window.open(link, '_blank');
+ main
     });
 }
 
