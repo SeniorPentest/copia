@@ -1444,6 +1444,38 @@ select, input, textarea { font-family: inherit; }
 }
 
 /* ===========================
+   FLOATING WHATSAPP
+=========================== */
+.whatsapp-floating {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #25d366;
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 14px 32px rgba(37,211,102,.35);
+    z-index: 1200;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+.whatsapp-floating:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 42px rgba(37,211,102,.45);
+}
+.whatsapp-floating:focus-visible {
+    outline: 3px solid rgba(37,211,102,.35);
+    outline-offset: 4px;
+}
+.whatsapp-floating svg {
+    width: 30px;
+    height: 30px;
+}
+
+/* ===========================
    RESPONSIVE
 =========================== */
 @media (max-width: 900px) {
@@ -1511,6 +1543,13 @@ select, input, textarea { font-family: inherit; }
     .snack-card { width: 100%; }
     .carousel-btn,
     .carousel-dots { display: none; }
+
+    .whatsapp-floating {
+        width: 56px;
+        height: 56px;
+        right: 16px;
+        bottom: 16px;
+    }
 }
 
 @media (max-width: 480px) {
