@@ -21,10 +21,22 @@ const cartCountEl = document.getElementById('cart-count');
 const whatsappButton = document.getElementById('whatsapp-button');
 const contactForm = document.getElementById('contact-form');
 const formStatus  = document.getElementById('form-status');
+ codex/add-loading-spinner-finalizar-compra
+const checkoutStatus = document.getElementById('checkout-status');
+const preferenceEndpointAttr = checkoutBtn?.dataset.preferenceEndpoint?.trim();
+const MP_PREFERENCE_ENDPOINT = preferenceEndpointAttr && preferenceEndpointAttr.startsWith('http')
+    ? preferenceEndpointAttr
+    : 'https://copia-gkyz.onrender.com/api/checkout/preferences';
+
+const HEALTH_ENDPOINT = 'https://copia-gkyz.onrender.com/health';
 const MP_PREFERENCE_ENDPOINT = 'https://copia-gkyz.onrender.com/api/checkout/preferences';
+ main
 const MP_STATIC_PREFERENCE_ID = (checkoutBtn?.dataset.preferenceId || '').trim() || window.MP_PREFERENCE_ID || '';
 const MP_PUBLIC_KEY = 'APP_USR-9a5c032a-aac2-47c7-8215-6f28b0fab4a2';
+const CHECKOUT_TIMEOUT_MS = 40000;
 const WHATSAPP_NUMBER = '5511915723418';
+const checkoutBtnLabel = checkoutBtn ? checkoutBtn.querySelector('.btn-label') : null;
+const defaultCheckoutLabel = checkoutBtnLabel?.textContent.trim() || checkoutBtn?.textContent.trim() || 'Finalizar Compra';
 let cart = [];
 let mpInstance = null;
 let emailInitialized = false;
@@ -226,6 +238,10 @@ function openCart() {
         cartOverlay.classList.add('open');
         document.body.classList.add('cart-open');
     }
+
+    if (HEALTH_ENDPOINT) {
+        fetch(HEALTH_ENDPOINT).catch(() => {});
+    }
 }
 
 function closeCart() {
@@ -282,22 +298,47 @@ function initMercadoPago() {
     }
 }
 
+function setCheckoutStatus(message = '', type = 'info') {
+    if (!checkoutStatus) return;
+    checkoutStatus.textContent = message;
+    checkoutStatus.className = message ? `cart-status ${type}` : 'cart-status';
+    checkoutStatus.hidden = !message;
+}
+
+function setCheckoutLoading(isLoading, loadingLabel = 'Finalizando...') {
+    if (!checkoutBtn) return;
+    checkoutBtn.disabled = isLoading;
+    checkoutBtn.classList.toggle('is-loading', isLoading);
+    checkoutBtn.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+    if (checkoutBtnLabel) {
+        checkoutBtnLabel.textContent = isLoading ? loadingLabel : defaultCheckoutLabel;
+    }
+}
+
 async function handleCheckout() {
+    setCheckoutStatus('', 'info');
+
     if (!cart.length) {
-        alert('Adicione itens ao carrinho para finalizar a compra.');
+        setCheckoutStatus('Adicione itens ao carrinho para finalizar a compra.', 'error');
         return;
     }
 
+    setCheckoutLoading(true, 'Preparando...');
     initMercadoPago();
     if (!mpInstance) {
-        alert('O SDK do Mercado Pago não foi carregado. Verifique sua conexão.');
+        setCheckoutStatus('Não foi possível carregar o Mercado Pago. Verifique sua conexão.', 'error');
+        setCheckoutLoading(false);
         return;
     }
 
     let preferenceId = MP_STATIC_PREFERENCE_ID;
 
     if (!preferenceId && MP_PREFERENCE_ENDPOINT) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), CHECKOUT_TIMEOUT_MS);
+
         try {
+            setCheckoutStatus('Conectando ao servidor de pagamento...', 'info');
             const response = await fetch(MP_PREFERENCE_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -310,24 +351,42 @@ async function handleCheckout() {
                     })),
                     total_amount: getCartTotal(),
                 }),
+                signal: controller.signal,
             });
 
             if (!response.ok) throw new Error('Erro ao criar preferência');
             const data = await response.json();
             preferenceId = data.id || data.preferenceId || data.preference_id;
+            setCheckoutStatus('', 'info');
         } catch (error) {
             console.error('Erro ao criar preferência', error);
-            alert('Não foi possível iniciar o pagamento. Verifique o endpoint configurado.');
+            const message = controller.signal.aborted
+                ? 'Servidor iniciando, tente novamente em instantes'
+                : 'Não foi possível iniciar o pagamento agora. Tente novamente em instantes.';
+            setCheckoutStatus(message, 'error');
+            setCheckoutLoading(false);
             return;
+        } finally {
+            clearTimeout(timeoutId);
         }
     }
 
     if (!preferenceId) {
-        alert('Defina um preferenceId ou endpoint do Mercado Pago para concluir o pagamento.');
+        setCheckoutStatus('Defina um preferenceId ou endpoint do Mercado Pago para concluir o pagamento.', 'error');
+        setCheckoutLoading(false);
         return;
     }
 
-    mpInstance.checkout({ preferenceId }).open();
+    try {
+        setCheckoutStatus('Redirecionando para o pagamento...', 'info');
+        mpInstance.checkout({ preferenceId }).open();
+        setCheckoutStatus('', 'info');
+    } catch (error) {
+        console.error('Erro ao abrir checkout', error);
+        setCheckoutStatus('Não foi possível abrir o checkout agora. Tente novamente em instantes.', 'error');
+    } finally {
+        setCheckoutLoading(false);
+    }
 }
 
 function setupCheckoutButton() {

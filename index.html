@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ codex/add-complete-seo-metatags
     <title>VieFive | Snacks funcionais para foco e energia dos estudantes</title>
     <meta name="description" content="Snacks funcionais feitos por estudantes para turbinar foco, concentração e energia nos estudos com ingredientes naturais.">
     <link rel="canonical" href="https://seniorpentest.github.io/">
@@ -15,6 +16,16 @@
     <meta name="twitter:title" content="VieFive | Snacks funcionais para foco e energia dos estudantes">
     <meta name="twitter:description" content="Snacks funcionais feitos por estudantes para turbinar foco, concentração e energia nos estudos com ingredientes naturais.">
     <meta name="twitter:image" content="https://seniorpentest.github.io/fotologo.jpeg">
+
+    <title>Vie FIVE – A sua plataforma de conteúdo</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <meta property="og:image" content="og-image.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+ main
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -147,7 +158,7 @@
                 </button>
                 <div class="snacks-carousel">
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="barra vermelha.png" alt="Barra vermelha"></div>
+                        <div class="snack-card-img"><img src="barra-vermelha.png" alt="Barra vermelha"></div>
                         <h3>Barra Guaraná &amp; Cacau</h3>
                         <p>Barra funcional com guaraná natural, nibs de cacau 70% e base de tâmaras. Estimula o estado de alerta e proporciona energia rápida para maratonas de estudo.</p>
                         <div class="snack-price">
@@ -159,7 +170,7 @@
                         </button>
                     </div>
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="barra verde.png" alt="Barra verde"></div>
+                        <div class="snack-card-img"><img src="barra-verde.png" alt="Barra verde"></div>
                         <h3>Barra Amêndoas &amp; Cerejas</h3>
                         <p>Combinação premium de amêndoas, nozes e cerejas desidratadas ricas em flavonoides. Auxilia na proteção cognitiva e na manutenção da memória de longo prazo.</p>
                         <div class="snack-price">
@@ -171,7 +182,7 @@
                         </button>
                     </div>
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="barra amarela.png" alt="Barra amarela"></div>
+                        <div class="snack-card-img"><img src="barra-amarela.png" alt="Barra amarela"></div>
                         <h3>Barra Açaí &amp; Sementes</h3>
                         <p>Blend antioxidante de açaí puro, guaraná e mix de sementes selecionadas. Combate o estresse oxidativo mental e garante energia estável para o dia a dia acadêmico.</p>
                         <div class="snack-price">
@@ -183,7 +194,7 @@
                         </button>
                     </div>
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="multigran.png" alt="Barra Multigran" data-fallback="barra verde.png"></div>
+                        <div class="snack-card-img"><img src="multigran.png" alt="Barra Multigran" data-fallback="barra-verde.png"></div>
                         <h3>Barra Multigran</h3>
                         <p>Mix de grãos integrais e sementes selecionadas. Rica em fibras e nutrientes para manter sua energia e concentração ao longo do dia.</p>
                         <div class="snack-price">
@@ -195,7 +206,7 @@
                         </button>
                     </div>
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="barramaracuja.png" alt="Barra Maracujá" data-fallback="barra amarela.png"></div>
+                        <div class="snack-card-img"><img src="barramaracuja.png" alt="Barra Maracujá" data-fallback="barra-amarela.png"></div>
                         <h3>Barra Maracujá</h3>
                         <p>Barra natural com maracujá que ajuda a reduzir o estresse e ansiedade durante os estudos. Ideal para momentos de foco e concentração.</p>
                         <div class="snack-price">
@@ -207,7 +218,7 @@
                         </button>
                     </div>
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="energetico.png" alt="Barra Energética" data-fallback="barra vermelha.png"></div>
+                        <div class="snack-card-img"><img src="energetico.png" alt="Barra Energética" data-fallback="barra-vermelha.png"></div>
                         <h3>Barra Energética</h3>
                         <p>Fórmula especial com ingredientes energéticos naturais. Perfeita para dar aquele impulso extra quando você mais precisa.</p>
                         <div class="snack-price">
@@ -619,9 +630,11 @@
                 <button class="btn btn-primary btn-full" id="checkout-btn"
                         data-preference-endpoint="/api/checkout/preferences"
                         data-preference-id="">
-                    Finalizar Compra
+                    <span class="btn-label">Finalizar Compra</span>
+                    <span class="btn-spinner" aria-hidden="true"></span>
                 </button>
             </div>
+            <p class="cart-status" id="checkout-status" role="status" aria-live="polite" hidden></p>
             <p class="cart-hint">Pagamento via Mercado Pago Checkout Pro</p>
         </div>
     </aside>
