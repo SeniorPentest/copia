@@ -21,10 +21,12 @@ const cartCountEl = document.getElementById('cart-count');
 const whatsappButton = document.getElementById('whatsapp-button');
 const contactForm = document.getElementById('contact-form');
 const formStatus  = document.getElementById('form-status');
-const MP_PREFERENCE_ENDPOINT = 'https://copia-gkyz.onrender.com/api/checkout/preferences';
-const MP_STATIC_PREFERENCE_ID = (checkoutBtn?.dataset.preferenceId || '').trim() || window.MP_PREFERENCE_ID || '';
-const MP_PUBLIC_KEY = 'APP_USR-9a5c032a-aac2-47c7-8215-6f28b0fab4a2';
-const WHATSAPP_NUMBER = '5511915723418';
+const appConfig = window.APP_CONFIG || {};
+const MP_PREFERENCE_ENDPOINT = appConfig.mercadoPago?.preferenceEndpoint || 'https://copia-gkyz.onrender.com/api/checkout/preferences';
+const MP_STATIC_PREFERENCE_ID = (checkoutBtn?.dataset.preferenceId || '').trim() || appConfig.mercadoPago?.staticPreferenceId || window.MP_PREFERENCE_ID || '';
+const MP_PUBLIC_KEY = appConfig.mercadoPago?.publicKey || 'APP_USR-9a5c032a-aac2-47c7-8215-6f28b0fab4a2';
+const WHATSAPP_NUMBER = appConfig.whatsappNumber || '5511915723418';
+const emailConfig = appConfig.emailjs || {};
 let cart = [];
 let mpInstance = null;
 let emailInitialized = false;
@@ -472,9 +474,10 @@ if (contactForm) {
         if (submitBtn) submitBtn.disabled = true;
         if (submitSpan) submitSpan.textContent = 'Enviando...';
 
-        const serviceId = contactForm.dataset.emailjsServiceId;
-        const templateId = contactForm.dataset.emailjsTemplateId;
-        const publicKey = contactForm.dataset.emailjsPublicKey;
+        const serviceId = contactForm.dataset.emailjsServiceId || emailConfig.serviceId;
+        const templateId = contactForm.dataset.emailjsTemplateId || emailConfig.templateId;
+        const publicKey = contactForm.dataset.emailjsPublicKey || emailConfig.publicKey;
+        const toEmail = contactForm.dataset.emailjsTo || emailConfig.toEmail || 'viefive@gmail.com.br';
 
         try {
             if (!window.emailjs || !serviceId || !templateId || !publicKey) {
@@ -491,7 +494,7 @@ if (contactForm) {
                 reply_to: email,
                 subject,
                 message,
-                to_email: 'viefive@gmail.com.br',
+                to_email: toEmail,
             });
 
             setFormStatus('Mensagem enviada com sucesso! Em breve entraremos em contato. ✉', 'success');
