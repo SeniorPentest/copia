@@ -8,6 +8,26 @@ const carouselWrapper = document.querySelector('.snacks-carousel-wrapper');
 const prevBtn = document.querySelector('.carousel-btn-prev');
 const nextBtn = document.querySelector('.carousel-btn-next');
 const dotsContainer = document.querySelector('.carousel-dots');
+const CART_STORAGE_KEY = 'viefive-cart';
+const cartDrawer = document.getElementById('cart-drawer');
+const cartOverlay = document.getElementById('cart-overlay');
+const cartItemsContainer = document.getElementById('cart-items');
+const cartTotalValue = document.getElementById('cart-total-value');
+const cartToggle = document.getElementById('cart-toggle');
+const cartClose = document.getElementById('cart-close');
+const clearCartBtn = document.getElementById('clear-cart');
+const checkoutBtn = document.getElementById('checkout-btn');
+const cartCountEl = document.getElementById('cart-count');
+const whatsappButton = document.getElementById('whatsapp-button');
+const contactForm = document.getElementById('contact-form');
+const formStatus  = document.getElementById('form-status');
+const MP_PREFERENCE_ENDPOINT = (checkoutBtn?.dataset.preferenceEndpoint || '').trim() || window.MP_PREFERENCE_ENDPOINT || '';
+const MP_STATIC_PREFERENCE_ID = (checkoutBtn?.dataset.preferenceId || '').trim() || window.MP_PREFERENCE_ID || '';
+const MP_PUBLIC_KEY = 'APP_USR-9a5c032a-aac2-47c7-8215-6f28b0fab4a2';
+const WHATSAPP_NUMBER = '5511915723418';
+let cart = [];
+let mpInstance = null;
+let emailInitialized = false;
 
 function initSnackImageFallbacks() {
     const images = document.querySelectorAll('.snack-card-img img[data-fallback]');
@@ -94,6 +114,242 @@ function initCarousel() {
 
     // Initial update
     updateCarousel();
+}
+
+// ===========================
+// Cart & Checkout
+// ===========================
+
+function formatCurrency(value) {
+    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function loadCart() {
+    try {
+        const stored = localStorage.getItem(CART_STORAGE_KEY);
+        cart = stored ? JSON.parse(stored) : [];
+    } catch (error) {
+        cart = [];
+    }
+}
+
+function saveCart() {
+    try {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    } catch (error) {
+        console.error('Não foi possível salvar o carrinho no navegador.', error);
+    }
+}
+
+function getCartTotal() {
+    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
+
+function getCartCount() {
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
+}
+
+function renderCart() {
+    if (!cartItemsContainer) return;
+
+    cartItemsContainer.innerHTML = '';
+
+    if (!cart.length) {
+        const empty = document.createElement('p');
+        empty.className = 'cart-empty';
+        empty.textContent = 'Seu carrinho está vazio. Adicione snacks para começar o pedido.';
+        cartItemsContainer.appendChild(empty);
+    } else {
+        const fragment = document.createDocumentFragment();
+        cart.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'cart-item';
+            row.innerHTML = `
+                <div class="cart-item-info">
+                    <h4>${item.name}</h4>
+                    <span>${formatCurrency(item.price)} / un.</span>
+                </div>
+                <div class="cart-item-actions">
+                    <div class="cart-qty">
+                        <button type="button" data-action="decrease" data-id="${item.id}" aria-label="Diminuir quantidade">-</button>
+                        <span>${item.quantity}</span>
+                        <button type="button" data-action="increase" data-id="${item.id}" aria-label="Aumentar quantidade">+</button>
+                    </div>
+                    <div class="cart-item-total">${formatCurrency(item.price * item.quantity)}</div>
+                    <button class="cart-remove" type="button" data-action="remove" data-id="${item.id}" aria-label="Remover item">✕</button>
+                </div>
+            `;
+            fragment.appendChild(row);
+        });
+        cartItemsContainer.appendChild(fragment);
+    }
+
+    if (cartTotalValue) cartTotalValue.textContent = formatCurrency(getCartTotal());
+    if (cartCountEl) cartCountEl.textContent = getCartCount();
+}
+
+function addToCart(product) {
+    const existing = cart.find(item => item.id === product.id);
+    if (existing) {
+        existing.quantity += product.quantity || 1;
+    } else {
+        cart.push({ ...product, quantity: product.quantity || 1 });
+    }
+    saveCart();
+    renderCart();
+}
+
+function changeQuantity(id, delta) {
+    const item = cart.find(entry => entry.id === id);
+    if (!item) return;
+    item.quantity = Math.max(1, item.quantity + delta);
+    saveCart();
+    renderCart();
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    saveCart();
+    renderCart();
+}
+
+function clearCartItems() {
+    cart = [];
+    saveCart();
+    renderCart();
+}
+
+function openCart() {
+    if (cartDrawer && cartOverlay) {
+        cartDrawer.classList.add('open');
+        cartDrawer.setAttribute('aria-hidden', 'false');
+        cartOverlay.classList.add('open');
+        document.body.classList.add('cart-open');
+    }
+}
+
+function closeCart() {
+    if (cartDrawer && cartOverlay) {
+        cartDrawer.classList.remove('open');
+        cartDrawer.setAttribute('aria-hidden', 'true');
+        cartOverlay.classList.remove('open');
+        document.body.classList.remove('cart-open');
+    }
+}
+
+function setupCartInteractions() {
+    if (cartItemsContainer) {
+        cartItemsContainer.addEventListener('click', (event) => {
+            const actionBtn = event.target.closest('[data-action]');
+            if (!actionBtn) return;
+            const { action, id } = actionBtn.dataset;
+            if (action === 'increase') changeQuantity(id, 1);
+            if (action === 'decrease') changeQuantity(id, -1);
+            if (action === 'remove') removeFromCart(id);
+        });
+    }
+
+    if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
+    if (cartClose) cartClose.addEventListener('click', closeCart);
+    if (clearCartBtn) clearCartBtn.addEventListener('click', clearCartItems);
+    if (cartToggle) cartToggle.addEventListener('click', openCart);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeCart();
+    });
+}
+
+function setupAddToCartButtons() {
+    const buttons = document.querySelectorAll('.btn-add-cart');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const price = parseFloat(btn.dataset.price || '0');
+            const product = {
+                id: btn.dataset.id || btn.dataset.name || `item-${Date.now()}`,
+                name: btn.dataset.name || btn.textContent.trim(),
+                price: isNaN(price) ? 0 : price,
+                quantity: 1,
+            };
+            addToCart(product);
+            openCart();
+        });
+    });
+}
+
+function initMercadoPago() {
+    if (!window.MercadoPago) return;
+    if (!mpInstance) {
+        mpInstance = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
+    }
+}
+
+async function handleCheckout() {
+    if (!cart.length) {
+        alert('Adicione itens ao carrinho para finalizar a compra.');
+        return;
+    }
+
+    initMercadoPago();
+    if (!mpInstance) {
+        alert('O SDK do Mercado Pago não foi carregado. Verifique sua conexão.');
+        return;
+    }
+
+    let preferenceId = MP_STATIC_PREFERENCE_ID;
+
+    if (!preferenceId && MP_PREFERENCE_ENDPOINT) {
+        try {
+            const response = await fetch(MP_PREFERENCE_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    items: cart.map(item => ({
+                        title: item.name,
+                        quantity: item.quantity,
+                        unit_price: item.price,
+                        currency_id: 'BRL',
+                    })),
+                    total_amount: getCartTotal(),
+                }),
+            });
+
+            if (!response.ok) throw new Error('Erro ao criar preferência');
+            const data = await response.json();
+            preferenceId = data.id || data.preferenceId || data.preference_id;
+        } catch (error) {
+            console.error('Erro ao criar preferência', error);
+            alert('Não foi possível iniciar o pagamento. Verifique o endpoint configurado.');
+            return;
+        }
+    }
+
+    if (!preferenceId) {
+        alert('Defina um preferenceId ou endpoint do Mercado Pago para concluir o pagamento.');
+        return;
+    }
+
+    mpInstance.checkout({ preferenceId }).open();
+}
+
+function setupCheckoutButton() {
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', handleCheckout);
+    }
+}
+
+function setupWhatsappButton() {
+    if (!whatsappButton) return;
+    whatsappButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const summary = cart.length
+            ? cart.map(item => `${item.quantity}x ${item.name} - ${formatCurrency(item.price * item.quantity)}`).join('\n')
+            : 'Quero conhecer os snacks da VieFive!';
+        const total = formatCurrency(getCartTotal());
+        const message = cart.length
+            ? `Olá! Gostaria de finalizar um pedido:\n${summary}\n\nTotal: ${total}`
+            : `Olá! ${summary}`;
+        const link = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+        window.open(link, '_blank');
+    });
 }
 
 // ===========================
@@ -192,15 +448,13 @@ function revealOnScroll() {
 // Contact Form
 // ===========================
 
-const contactForm = document.getElementById('contact-form');
-const formStatus  = document.getElementById('form-status');
-
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const name    = contactForm.name.value.trim();
         const email   = contactForm.email.value.trim();
+        const subject = (contactForm.subject?.value || '').trim() || 'Contato VieFive';
         const message = contactForm.message.value.trim();
 
         if (!name || !email || !message) {
@@ -218,12 +472,37 @@ if (contactForm) {
         if (submitBtn) submitBtn.disabled = true;
         if (submitSpan) submitSpan.textContent = 'Enviando...';
 
-        setTimeout(() => {
+        const serviceId = contactForm.dataset.emailjsServiceId;
+        const templateId = contactForm.dataset.emailjsTemplateId;
+        const publicKey = contactForm.dataset.emailjsPublicKey;
+
+        try {
+            if (!window.emailjs || !serviceId || !templateId || !publicKey) {
+                throw new Error('Configuração do EmailJS ausente');
+            }
+
+            if (!emailInitialized) {
+                emailjs.init(publicKey);
+                emailInitialized = true;
+            }
+
+            await emailjs.send(serviceId, templateId, {
+                from_name: name,
+                reply_to: email,
+                subject,
+                message,
+                to_email: 'viefive@gmail.com.br',
+            });
+
             setFormStatus('Mensagem enviada com sucesso! Em breve entraremos em contato. ✉', 'success');
             contactForm.reset();
+        } catch (error) {
+            console.error(error);
+            setFormStatus('Não foi possível enviar agora. Verifique as configurações do EmailJS.', 'error');
+        } finally {
             if (submitBtn) submitBtn.disabled = false;
             if (submitSpan) submitSpan.textContent = 'Enviar Mensagem';
-        }, 1200);
+        }
     });
 }
 
@@ -250,6 +529,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize carousel
     initCarousel();
     initSnackImageFallbacks();
+    loadCart();
+    renderCart();
+    setupCartInteractions();
+    setupAddToCartButtons();
+    setupCheckoutButton();
+    setupWhatsappButton();
+    initMercadoPago();
 
     // Add reveal class to cards and sections
     const targets = document.querySelectorAll(
