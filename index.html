@@ -608,9 +608,11 @@
                 <button class="btn btn-primary btn-full" id="checkout-btn"
                         data-preference-endpoint="/api/checkout/preferences"
                         data-preference-id="">
-                    Finalizar Compra
+                    <span class="btn-label">Finalizar Compra</span>
+                    <span class="btn-spinner" aria-hidden="true"></span>
                 </button>
             </div>
+            <p class="cart-status" id="checkout-status" role="status" aria-live="polite" hidden></p>
             <p class="cart-hint">Pagamento via Mercado Pago Checkout Pro</p>
         </div>
     </aside>
