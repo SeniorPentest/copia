@@ -25,6 +25,7 @@ const MP_PREFERENCE_ENDPOINT = 'https://copia-gkyz.onrender.com/api/checkout/pre
 const MP_STATIC_PREFERENCE_ID = (checkoutBtn?.dataset.preferenceId || '').trim() || window.MP_PREFERENCE_ID || '';
 const MP_PUBLIC_KEY = 'APP_USR-9a5c032a-aac2-47c7-8215-6f28b0fab4a2';
 const WHATSAPP_NUMBER = '5511915723418';
+const WHATSAPP_MESSAGE = 'Olá! Vim pelo site da VieFive e gostaria de saber mais sobre os produtos.';
 let cart = [];
 let mpInstance = null;
 let emailInitialized = false;
@@ -338,17 +339,15 @@ function setupCheckoutButton() {
 
 function setupWhatsappButton() {
     if (!whatsappButton) return;
+
+    const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+    whatsappButton.setAttribute('href', whatsappLink);
+    whatsappButton.setAttribute('target', '_blank');
+    whatsappButton.setAttribute('rel', 'noopener noreferrer');
+
     whatsappButton.addEventListener('click', (e) => {
         e.preventDefault();
-        const summary = cart.length
-            ? cart.map(item => `${item.quantity}x ${item.name} - ${formatCurrency(item.price * item.quantity)}`).join('\n')
-            : 'Quero conhecer os snacks da VieFive!';
-        const total = formatCurrency(getCartTotal());
-        const message = cart.length
-            ? `Olá! Gostaria de finalizar um pedido:\n${summary}\n\nTotal: ${total}`
-            : `Olá! ${summary}`;
-        const link = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-        window.open(link, '_blank');
+        window.open(whatsappLink, '_blank');
     });
 }
 
