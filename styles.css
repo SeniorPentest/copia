@@ -72,6 +72,35 @@ select, input, textarea { font-family: inherit; }
     cursor: pointer;
     white-space: nowrap;
 }
+.btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+.btn-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,.6);
+    border-top-color: var(--white);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: none;
+}
+.btn.is-loading .btn-spinner {
+    display: inline-flex;
+}
+.btn.is-loading .btn-label {
+    opacity: .9;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 
 .btn-primary {
     background: var(--red);
@@ -1632,6 +1661,14 @@ select, input, textarea { font-family: inherit; }
     flex: 1.3;
     justify-content: center;
 }
+.cart-status {
+    min-height: 18px;
+    text-align: center;
+    font-size: .88rem;
+    color: var(--muted);
+}
+.cart-status.error { color: var(--red); }
+.cart-status.success { color: var(--moss); }
 .cart-hint {
     font-size: .82rem;
     color: var(--muted);
