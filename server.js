@@ -14,6 +14,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
+// Health check
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date() });
+});
+
 // Inicialização do Mercado Pago (Versão 2)
 let client;
 if (MP_ACCESS_TOKEN) {
