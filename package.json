@@ -1,0 +1,26 @@
+{
+  "name": "copia",
+  "version": "1.0.0",
+  "description": "Site VieFive com checkout Mercado Pago",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"No tests configured\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeniorPentest/copia.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SeniorPentest/copia/issues"
+  },
+  "homepage": "https://github.com/SeniorPentest/copia#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mercadopago": "^2.12.0"
+  }
+}
