@@ -35,6 +35,9 @@ const cartCountEl = document.getElementById('cart-count');
 const whatsappButton = document.getElementById('whatsapp-button');
 const contactForm = document.getElementById('contact-form');
 const formStatus  = document.getElementById('form-status');
+ codex/add-intersection-observer-animations
+const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
  codex/create-config-js-and-refactor-index
 
 const defaultPreferenceEndpoint = (checkoutBtn?.dataset.preferenceEndpoint || '').trim() || 'https://copia-gkyz.onrender.com/api/checkout/preferences';
@@ -57,6 +60,7 @@ const MP_PREFERENCE_ENDPOINT = preferenceEndpointAttr && preferenceEndpointAttr.
     : 'https://copia-gkyz.onrender.com/api/checkout/preferences';
 
 const HEALTH_ENDPOINT = 'https://copia-gkyz.onrender.com/health';
+ main
 const MP_PREFERENCE_ENDPOINT = 'https://copia-gkyz.onrender.com/api/checkout/preferences';
  main
 const MP_STATIC_PREFERENCE_ID = (checkoutBtn?.dataset.preferenceId || '').trim() || window.MP_PREFERENCE_ID || '';
@@ -669,7 +673,6 @@ window.addEventListener('scroll', () => {
         header.classList.remove('scrolled');
     }
     updateActiveNavLink();
-    revealOnScroll();
 });
 
 // Hamburger menu toggle
@@ -729,19 +732,130 @@ function updateActiveNavLink() {
 }
 
 // ===========================
-// Scroll Reveal Animation
+// Intersection Reveal Animation
 // ===========================
 
-function revealOnScroll() {
-    const revealElements = document.querySelectorAll('.reveal');
-    const windowHeight   = window.innerHeight;
+function setupRevealObserver() {
+    const revealElements = document.querySelectorAll('.reveal:not(.reveal-stagger)');
+    if (!revealElements.length) return;
 
-    revealElements.forEach(el => {
-        const top = el.getBoundingClientRect().top;
-        if (top < windowHeight - 60) {
+    if (reduceMotionQuery.matches) {
+        revealElements.forEach(el => {
             el.classList.add('visible');
-        }
+            el.style.transitionDuration = '0s';
+            el.style.transform = 'none';
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                obs.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.2,
+        rootMargin: '0px 0px -10% 0px',
     });
+
+    revealElements.forEach(el => observer.observe(el));
+}
+
+function setupStaggeredProductCards() {
+    const cards = Array.from(document.querySelectorAll('.reveal.reveal-stagger'));
+    if (!cards.length) return;
+
+    if (reduceMotionQuery.matches) {
+        cards.forEach(card => {
+            card.classList.add('visible');
+            card.style.transitionDuration = '0s';
+            card.style.transform = 'none';
+            card.style.transitionDelay = '0ms';
+        });
+        return;
+    }
+
+    const revealCards = () => {
+        cards.forEach((card, index) => {
+            card.style.transitionDelay = `${index * 100}ms`;
+            card.classList.add('visible');
+        });
+    };
+
+    const observerTarget = document.getElementById('snacks') || cards[0].closest('section') || cards[0];
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                revealCards();
+                obs.disconnect();
+            }
+        });
+    }, { threshold: 0.25 });
+
+    observer.observe(observerTarget);
+}
+
+function setupHeroCounters() {
+    const statElements = Array.from(document.querySelectorAll('.hero-stats .stat strong'));
+    if (!statElements.length) return;
+
+    const counters = statElements.map(el => {
+        const text = el.textContent.trim();
+        const match = text.match(/([+-]?\d+(?:[.,]\d+)?)/);
+        const numericPart = match ? match[1] : '0';
+        const prefix = match ? text.slice(0, match.index) : '';
+        const suffix = match ? text.slice(match.index + numericPart.length) : '';
+        const target = parseFloat(numericPart.replace(/\./g, '').replace(',', '.')) || 0;
+
+        if (reduceMotionQuery.matches) {
+            el.textContent = text;
+        } else {
+            el.textContent = `${prefix}0${suffix}`;
+        }
+
+        return { el, target, prefix, suffix, original: text };
+    });
+
+    if (reduceMotionQuery.matches) return;
+
+    const animateCounters = () => {
+        counters.forEach(counter => {
+            const start = performance.now();
+            const duration = 1200;
+
+            const step = (now) => {
+                const progress = Math.min((now - start) / duration, 1);
+                const value = Math.round(progress * counter.target);
+                counter.el.textContent = `${counter.prefix}${value}${counter.suffix}`;
+
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    counter.el.textContent = `${counter.prefix}${counter.target}${counter.suffix}`;
+                }
+            };
+
+            requestAnimationFrame(step);
+        });
+    };
+
+    const heroSection = document.getElementById('hero');
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounters();
+                obs.disconnect();
+            }
+        });
+    }, { threshold: 0.5 });
+
+    if (heroSection) {
+        observer.observe(heroSection);
+    } else {
+        statElements.forEach(el => observer.observe(el));
+    }
 }
 
 // ===========================
@@ -846,18 +960,25 @@ document.addEventListener('DOMContentLoaded', () => {
     initMercadoPago();
 
     // Add reveal class to cards and sections
-    const targets = document.querySelectorAll(
-        '.snack-card, .value-card, .program-card, .plan-card, ' +
+    const revealTargets = document.querySelectorAll(
+        'section, .value-card, .program-card, .plan-card, ' +
         '.channel-card, .loyalty-text, .loyalty-visual, ' +
         '.compliance-text, .compliance-seals, ' +
         '.contact-info, .contact-form, .section-header'
     );
-    targets.forEach(el => {
+    revealTargets.forEach(el => {
         if (!el.classList.contains('reveal')) {
             el.classList.add('reveal');
         }
     });
 
-    revealOnScroll();
+    const productCards = document.querySelectorAll('.snack-card');
+    productCards.forEach(card => {
+        card.classList.add('reveal', 'reveal-stagger');
+    });
+
+    setupRevealObserver();
+    setupStaggeredProductCards();
+    setupHeroCounters();
     updateActiveNavLink();
 });
