@@ -3,13 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ codex/create-config-js-and-refactor-index
+    <title>Sua Marca – Seu slogan</title>
+
+ codex/add-complete-seo-metatags
+    <title>VieFive | Snacks funcionais para foco e energia dos estudantes</title>
+    <meta name="description" content="Snacks funcionais feitos por estudantes para turbinar foco, concentração e energia nos estudos com ingredientes naturais.">
+    <link rel="canonical" href="https://seniorpentest.github.io/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="VieFive | Snacks funcionais para foco e energia dos estudantes">
+    <meta property="og:description" content="Snacks funcionais feitos por estudantes para turbinar foco, concentração e energia nos estudos com ingredientes naturais.">
+    <meta property="og:image" content="https://seniorpentest.github.io/fotologo.jpeg">
+    <meta property="og:url" content="https://seniorpentest.github.io/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VieFive | Snacks funcionais para foco e energia dos estudantes">
+    <meta name="twitter:description" content="Snacks funcionais feitos por estudantes para turbinar foco, concentração e energia nos estudos com ingredientes naturais.">
+    <meta name="twitter:image" content="https://seniorpentest.github.io/fotologo.jpeg">
+
     <title>Vie FIVE – A sua plataforma de conteúdo</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <meta property="og:image" content="og-image.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+ main
+ main
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://sdk.mercadopago.com/js/v2" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
+    <script src="config.js" defer></script>
 </head>
 <body>
 
@@ -19,7 +46,7 @@
     <header id="header">
         <nav class="navbar">
             <div class="nav-logo">
-                <a href="#hero">
+                <a href="#hero" id="brand-logo" aria-label="Ir para o início">
                     <span class="logo-v">V</span><span class="logo-ie">ie</span><span class="logo-five">FIVE</span>
                 </a>
             </div>
@@ -68,7 +95,7 @@
         <div class="hero-bg-shape"></div>
         <div class="container hero-inner">
             <div class="hero-text">
-                <div class="hero-badge">
+                <div class="hero-badge" id="hero-badge">
                     <span class="badge-dot"></span>
                     Feito por estudantes, para estudantes
                 </div>
@@ -76,8 +103,8 @@
                     Ative sua melhor
                     <span class="hero-highlight">versão</span>
                 </h1>
-                <p class="hero-description">
-                    A VieFive nasceu da rotina real de cinco estudantes que, assim como você, conhecem o desafio de render o máximo com o tempo contado. Não entregamos apenas lanches; entregamos foco, concentração e saúde em cada mordida.
+                <p class="hero-description" id="hero-description">
+                    Descrição da marca e proposta de valor para o visitante.
                 </p>
                 <div class="hero-buttons">
                     <a href="#contact" class="btn btn-primary">Começar agora ›</a>
@@ -134,9 +161,12 @@
                 <button class="carousel-btn carousel-btn-prev" aria-label="Anterior">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 </button>
+ codex/create-config-js-and-refactor-index
+                <div class="snacks-carousel"></div>
+
                 <div class="snacks-carousel">
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="barra vermelha.png" alt="Barra vermelha"></div>
+                        <div class="snack-card-img"><img src="barra-vermelha.png" alt="Barra vermelha"></div>
                         <h3>Barra Guaraná &amp; Cacau</h3>
                         <p>Barra funcional com guaraná natural, nibs de cacau 70% e base de tâmaras. Estimula o estado de alerta e proporciona energia rápida para maratonas de estudo.</p>
                         <div class="snack-price">
@@ -148,7 +178,7 @@
                         </button>
                     </div>
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="barra verde.png" alt="Barra verde"></div>
+                        <div class="snack-card-img"><img src="barra-verde.png" alt="Barra verde"></div>
                         <h3>Barra Amêndoas &amp; Cerejas</h3>
                         <p>Combinação premium de amêndoas, nozes e cerejas desidratadas ricas em flavonoides. Auxilia na proteção cognitiva e na manutenção da memória de longo prazo.</p>
                         <div class="snack-price">
@@ -160,7 +190,7 @@
                         </button>
                     </div>
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="barra amarela.png" alt="Barra amarela"></div>
+                        <div class="snack-card-img"><img src="barra-amarela.png" alt="Barra amarela"></div>
                         <h3>Barra Açaí &amp; Sementes</h3>
                         <p>Blend antioxidante de açaí puro, guaraná e mix de sementes selecionadas. Combate o estresse oxidativo mental e garante energia estável para o dia a dia acadêmico.</p>
                         <div class="snack-price">
@@ -172,7 +202,7 @@
                         </button>
                     </div>
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="multigran.png" alt="Barra Multigran" data-fallback="barra verde.png"></div>
+                        <div class="snack-card-img"><img src="multigran.png" alt="Barra Multigran" data-fallback="barra-verde.png"></div>
                         <h3>Barra Multigran</h3>
                         <p>Mix de grãos integrais e sementes selecionadas. Rica em fibras e nutrientes para manter sua energia e concentração ao longo do dia.</p>
                         <div class="snack-price">
@@ -184,7 +214,7 @@
                         </button>
                     </div>
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="barramaracuja.png" alt="Barra Maracujá" data-fallback="barra amarela.png"></div>
+                        <div class="snack-card-img"><img src="barramaracuja.png" alt="Barra Maracujá" data-fallback="barra-amarela.png"></div>
                         <h3>Barra Maracujá</h3>
                         <p>Barra natural com maracujá que ajuda a reduzir o estresse e ansiedade durante os estudos. Ideal para momentos de foco e concentração.</p>
                         <div class="snack-price">
@@ -196,7 +226,7 @@
                         </button>
                     </div>
                     <div class="snack-card">
-                        <div class="snack-card-img"><img src="energetico.png" alt="Barra Energética" data-fallback="barra vermelha.png"></div>
+                        <div class="snack-card-img"><img src="energetico.png" alt="Barra Energética" data-fallback="barra-vermelha.png"></div>
                         <h3>Barra Energética</h3>
                         <p>Fórmula especial com ingredientes energéticos naturais. Perfeita para dar aquele impulso extra quando você mais precisa.</p>
                         <div class="snack-price">
@@ -208,6 +238,7 @@
                         </button>
                     </div>
                 </div>
+ main
                 <button class="carousel-btn carousel-btn-next" aria-label="Próximo">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                 </button>
@@ -256,7 +287,7 @@
         <div class="container">
             <div class="loyalty-inner">
                 <div class="loyalty-text">
-                    <span class="section-tag">VieFive Points</span>
+                    <span class="section-tag" id="loyalty-tag">Clube de Pontos</span>
                     <h2>Ganhe pontos e <span class="text-accent">recompensas</span></h2>
                     <p>Quanto mais você compra, mais pontos acumula. Troque seus pontos por barras grátis, descontos e produtos exclusivos.</p>
                     <div class="loyalty-benefits">
@@ -286,11 +317,11 @@
                 </div>
 
                 <div class="loyalty-visual">
-                    <div class="loyalty-card">
-                        <div class="lcard-header">
-                            <div class="lcard-logo">Vie FIVE</div>
-                            <div class="lcard-tier">GOLD</div>
-                        </div>
+                        <div class="loyalty-card">
+                            <div class="lcard-header">
+                                <div class="lcard-logo" id="loyalty-card-logo">Sua Marca</div>
+                                <div class="lcard-tier">GOLD</div>
+                            </div>
                         <div class="lcard-points">
                             <span class="lcard-pts-num">12.480</span>
                             <span class="lcard-pts-label">pontos acumulados</span>
@@ -318,62 +349,9 @@
             <div class="section-header">
                 <span class="section-tag">Nosso Clube</span>
                 <h2>Escolha seu <span class="text-accent">plano</span></h2>
-                <p class="section-desc">Três níveis de benefícios para você aproveitar ao máximo a experiência Vie FIVE.</p>
+                <p class="section-desc" id="plans-description">Três níveis de benefícios para você aproveitar ao máximo a experiência.</p>
             </div>
-            <div class="plans-grid">
-                <!-- Prata -->
-                <div class="plan-card">
-                    <p class="plan-name">Prata</p>
-                    <div class="plan-price">
-                        <span class="plan-currency">R$</span>
-                        <span class="plan-amount">0</span>
-                        <span class="plan-period">/mês</span>
-                    </div>
-                    <ul class="plan-features">
-                        <li>Acumule 1 ponto por real gasto</li>
-                        <li>Acesso a promoções exclusivas</li>
-                        <li>Newsletter com dicas de nutrição</li>
-                        <li>Frete grátis acima de R$ 120</li>
-                    </ul>
-                    <a href="#contact" class="btn btn-outline-dark">Começar grátis</a>
-                </div>
-                <!-- Ouro -->
-                <div class="plan-card plan-card-featured">
-                    <span class="plan-badge">Mais popular</span>
-                    <p class="plan-name">Ouro</p>
-                    <div class="plan-price">
-                        <span class="plan-currency">R$</span>
-                        <span class="plan-amount">29</span>
-                        <span class="plan-period">/mês</span>
-                    </div>
-                    <ul class="plan-features">
-                        <li>Tudo do plano Prata</li>
-                        <li>2 pontos por real gasto</li>
-                        <li>Barra grátis a cada 10 compras</li>
-                        <li>Desconto de 10% em todos os pedidos</li>
-                        <li>Acesso antecipado a novos sabores</li>
-                    </ul>
-                    <a href="#contact" class="btn btn-outline-dark" style="background:#fff;color:var(--red);">Assinar Ouro</a>
-                </div>
-                <!-- Diamante -->
-                <div class="plan-card">
-                    <p class="plan-name">Diamante</p>
-                    <div class="plan-price">
-                        <span class="plan-currency">R$</span>
-                        <span class="plan-amount">59</span>
-                        <span class="plan-period">/mês</span>
-                    </div>
-                    <ul class="plan-features">
-                        <li>Tudo do plano Ouro</li>
-                        <li>3 pontos por real gasto</li>
-                        <li>Desconto de 20% em todos os pedidos</li>
-                        <li>Kit boas-vindas exclusivo</li>
-                        <li>Suporte prioritário 24h</li>
-                        <li>Convite para eventos presenciais</li>
-                    </ul>
-                    <a href="#contact" class="btn btn-primary">Assinar Diamante</a>
-                </div>
-            </div>
+            <div class="plans-grid" id="plans-grid"></div>
         </div>
     </section>
 
@@ -453,7 +431,7 @@
                             </div>
                             <div>
                                 <span class="contact-label">E-mail</span>
-                                <a href="mailto:viefive@gmail.com.br">viefive@gmail.com.br</a>
+                                <a id="contact-email-link" href="mailto:viefive@gmail.com.br">viefive@gmail.com.br</a>
                             </div>
                         </li>
                         <li>
@@ -462,7 +440,7 @@
                             </div>
                             <div>
                                 <span class="contact-label">Telefone</span>
-                                <a href="tel:+551141372565">(11) 4137-2565</a>
+                                <a id="contact-phone-link" href="tel:+551141372565">(11) 4137-2565</a>
                             </div>
                         </li>
                         <li>
@@ -471,7 +449,7 @@
                             </div>
                             <div>
                                 <span class="contact-label">Endereço</span>
-                                <span>Av. Paulista, nº 147 - 6° andar, Bela Vista - São Paulo/(SP)</span>
+                                <span id="contact-address">Av. Paulista, nº 147 - 6° andar, Bela Vista - São Paulo/(SP)</span>
                             </div>
                         </li>
                     </ul>
@@ -529,7 +507,7 @@
             <div class="footer-top">
                 <div>
                     <div class="footer-logo">
-                        <img src="rodape.png" alt="Vie FIVE Logo" style="height:60px;object-fit:contain;">
+                        <img src="rodape.png" alt="Logo da marca" id="footer-logo-img" style="height:60px;object-fit:contain;">
                     </div>
                     <p class="footer-tagline">Snacks funcionais para estudantes que buscam foco, energia e saúde. Alimentação de alta performance para a sua jornada acadêmica.</p>
                     <div class="footer-social">
@@ -575,7 +553,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2026 Vie FIVE. Todos os direitos reservados.</p>
+                <p>&copy; 2026 <span id="footer-brand-name">Sua Marca</span>. Todos os direitos reservados.</p>
                 <div class="footer-bottom-links">
                     <a href="#compliance">Política de Privacidade</a>
                     <a href="#compliance">Termos de Uso</a>
@@ -593,7 +571,7 @@
         <div class="cart-header">
             <div>
                 <p class="cart-kicker">Seu pedido</p>
-                <h3>Carrinho VieFive</h3>
+                <h3 id="cart-title">Carrinho</h3>
             </div>
             <button class="cart-close" id="cart-close" aria-label="Fechar carrinho">✕</button>
         </div>
@@ -608,9 +586,11 @@
                 <button class="btn btn-primary btn-full" id="checkout-btn"
                         data-preference-endpoint="/api/checkout/preferences"
                         data-preference-id="">
-                    Finalizar Compra
+                    <span class="btn-label">Finalizar Compra</span>
+                    <span class="btn-spinner" aria-hidden="true"></span>
                 </button>
             </div>
+            <p class="cart-status" id="checkout-status" role="status" aria-live="polite" hidden></p>
             <p class="cart-hint">Pagamento via Mercado Pago Checkout Pro</p>
         </div>
     </aside>
