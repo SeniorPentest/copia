@@ -160,14 +160,21 @@
                     total += lineTotal;
 
                     const li = document.createElement('li');
-                    li.innerHTML = `
-                        <div>
-                            <p class="item-name">${item.title || item.name || 'Item'}</p>
-                            <span class="item-qty">${quantity}x ${formatCurrencyBRL(price)}</span>
-                        </div>
-                        <strong>${formatCurrencyBRL(lineTotal)}</strong>
-                    `;
-                    itemsList.appendChild(li);
+
+                    const textWrapper = document.createElement('div');
+                    const nameEl = document.createElement('p');
+                    nameEl.className = 'item-name';
+                    nameEl.textContent = item.title || item.name || 'Item';
+                    const qtyEl = document.createElement('span');
+                    qtyEl.className = 'item-qty';
+                    qtyEl.textContent = `${quantity}x ${formatCurrencyBRL(price)}`;
+                    textWrapper.append(nameEl, qtyEl);
+
+                    const totalEl = document.createElement('strong');
+                    totalEl.textContent = formatCurrencyBRL(lineTotal);
+
+                    li.append(textWrapper, totalEl);
+                    itemsList.append(li);
                 });
 
                 if (summaryTotal) {
