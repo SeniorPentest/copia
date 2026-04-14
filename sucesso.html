@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento confirmado | Vie FIVE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ========================
+         HEADER
+    ========================= -->
+    <header id="header">
+        <nav class="navbar">
+            <div class="nav-logo">
+                <a href="index.html#hero">
+                    <span class="logo-v">V</span><span class="logo-ie">ie</span><span class="logo-five">FIVE</span>
+                </a>
+            </div>
+
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html#snacks">Snacks</a></li>
+                <li class="has-dropdown">
+                    <a href="index.html#values">
+                        Valores
+                        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#values">Nossa Missão</a></li>
+                        <li><a href="index.html#values">Diferenciais</a></li>
+                        <li><a href="index.html#compliance">Responsabilidade</a></li>
+                    </ul>
+                </li>
+                <li><a href="index.html#loyalty">Clube</a></li>
+                <li><a href="index.html#contact">Contato</a></li>
+            </ul>
+
+            <button class="cart-toggle" id="cart-toggle" aria-label="Abrir carrinho">
+                <span class="cart-toggle-icon" aria-hidden="true">🛒</span>
+                <span class="cart-toggle-label">Carrinho</span>
+                <span class="cart-count" id="cart-count">0</span>
+            </button>
+
+            <div class="nav-cta">
+                <a href="index.html#contact" class="btn-nav">Pedir agora</a>
+            </div>
+
+            <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <main class="success-main">
+        <section class="success-hero">
+            <div class="success-hero-bg"></div>
+            <div class="container success-layout">
+                <div class="success-copy">
+                    <span class="success-pill">Pagamento aprovado</span>
+                    <h1>Pagamento confirmado!</h1>
+                    <p class="success-lead">
+                        Recebemos a confirmação do Mercado Pago. Confira abaixo os detalhes enviados
+                        e fique à vontade para voltar à loja para continuar navegando.
+                    </p>
+                    <div class="success-actions">
+                        <a class="btn btn-primary" href="index.html">Voltar à loja</a>
+                        <a class="btn btn-outline" href="index.html#contact">Falar com a equipe</a>
+                    </div>
+                    <div class="success-status" id="status-row" hidden>
+                        <span class="status-label">Status</span>
+                        <span class="status-badge" id="payment-status"></span>
+                    </div>
+                </div>
+
+                <div class="success-card" id="order-card">
+                    <div class="success-card-header">
+                        <span class="section-tag">Resumo do pedido</span>
+                        <h2>Detalhes do pagamento</h2>
+                        <p>Mostramos as informações recebidas pelos parâmetros da URL.</p>
+                    </div>
+
+                    <div class="summary-sections">
+                        <div class="summary-block" id="items-block" hidden>
+                            <div class="summary-block-title">
+                                <h3>Itens</h3>
+                                <span class="summary-total" id="summary-total" hidden></span>
+                            </div>
+                            <ul class="summary-items" id="summary-items"></ul>
+                        </div>
+
+                        <div class="summary-block" id="details-block" hidden>
+                            <div class="summary-block-title">
+                                <h3>Dados do pagamento</h3>
+                            </div>
+                            <dl class="summary-grid" id="summary-grid"></dl>
+                        </div>
+
+                        <p class="summary-empty" id="summary-empty">
+                            Não recebemos detalhes do pedido na URL. Caso precise do comprovante,
+                            verifique o e-mail enviado pelo Mercado Pago ou fale com nossa equipe.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="success-footer">
+        <div class="container success-footer-inner">
+            <div class="footer-brand">
+                <div class="nav-logo">
+                    <a href="index.html#hero">
+                        <span class="logo-v">V</span><span class="logo-ie">ie</span><span class="logo-five">FIVE</span>
+                    </a>
+                </div>
+                <p>Foco, energia e sabor para a sua rotina de estudos.</p>
+            </div>
+            <div class="footer-actions">
+                <a class="btn btn-primary" href="index.html">Voltar à loja</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const itemsBlock = document.getElementById('items-block');
+            const detailsBlock = document.getElementById('details-block');
+            const itemsList = document.getElementById('summary-items');
+            const summaryGrid = document.getElementById('summary-grid');
+            const emptyState = document.getElementById('summary-empty');
+            const statusBadge = document.getElementById('payment-status');
+            const statusRow = document.getElementById('status-row');
+            const summaryTotal = document.getElementById('summary-total');
+
+            const status = params.get('status') || params.get('collection_status') || params.get('payment_status');
+            if (status && statusBadge && statusRow) {
+                statusBadge.textContent = status;
+                statusBadge.dataset.status = status.toLowerCase();
+                statusRow.hidden = false;
+            }
+
+            const parsedItems = parseItems(params);
+            if (parsedItems.length && itemsList && itemsBlock) {
+                let total = 0;
+                itemsList.innerHTML = '';
+                parsedItems.forEach(item => {
+                    const quantity = Number(item.quantity) || 1;
+                    const price = Number(item.unit_price || item.price || 0);
+                    const lineTotal = price * quantity;
+                    total += lineTotal;
+
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div>
+                            <p class="item-name">${item.title || item.name || 'Item'}</p>
+                            <span class="item-qty">${quantity}x ${formatCurrencyBRL(price)}</span>
+                        </div>
+                        <strong>${formatCurrencyBRL(lineTotal)}</strong>
+                    `;
+                    itemsList.appendChild(li);
+                });
+
+                if (summaryTotal) {
+                    summaryTotal.textContent = formatCurrencyBRL(total);
+                    summaryTotal.hidden = false;
+                }
+
+                itemsBlock.hidden = false;
+            }
+
+            const detailFields = [
+                { key: 'status', label: 'Status' },
+                { key: 'collection_status', label: 'Status da cobrança' },
+                { key: 'payment_id', label: 'ID do pagamento' },
+                { key: 'collection_id', label: 'ID da cobrança' },
+                { key: 'merchant_order_id', label: 'Pedido' },
+                { key: 'preference_id', label: 'Preferência' },
+                { key: 'external_reference', label: 'Referência externa' },
+                { key: 'transaction_amount', label: 'Valor' },
+                { key: 'amount', label: 'Valor' },
+                { key: 'total_amount', label: 'Valor' },
+                { key: 'payment_type', label: 'Tipo de pagamento' },
+                { key: 'status_detail', label: 'Detalhe do status' },
+            ];
+
+            const hasDetails = detailFields.some(field => params.get(field.key));
+            if (hasDetails && summaryGrid && detailsBlock) {
+                detailFields.forEach(({ key, label }) => {
+                    const value = params.get(key);
+                    if (!value) return;
+                    const dt = document.createElement('dt');
+                    dt.textContent = label;
+                    const dd = document.createElement('dd');
+                    dd.textContent = formatValue(key, value);
+                    summaryGrid.append(dt, dd);
+                });
+                detailsBlock.hidden = false;
+            }
+
+            if ((parsedItems.length || hasDetails) && emptyState) {
+                emptyState.hidden = true;
+            }
+        });
+
+        function parseItems(params) {
+            const raw = params.get('items') || params.get('order_items');
+            if (!raw) return [];
+            try {
+                const decoded = decodeURIComponent(raw);
+                const parsed = JSON.parse(decoded);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (error) {
+                console.warn('Não foi possível ler os itens do pedido:', error);
+                return [];
+            }
+        }
+
+        function formatCurrencyBRL(value) {
+            const amount = Number(value);
+            if (Number.isNaN(amount)) return value;
+            return amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function formatValue(key, value) {
+            const amountKeys = ['transaction_amount', 'amount', 'total_amount'];
+            if (amountKeys.includes(key)) return formatCurrencyBRL(value);
+            return value;
+        }
+    </script>
+</body>
+</html>

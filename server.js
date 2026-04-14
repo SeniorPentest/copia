@@ -36,9 +36,9 @@ app.post('/api/checkout/preferences', async (req, res) => {
                 currency_id: 'BRL'
             })),
             back_urls: {
-                success: "https://seniorpentest.github.io/copia/",
-                failure: "https://seniorpentest.github.io/copia/",
-                pending: "https://seniorpentest.github.io/copia/"
+                success: "https://seniorpentest.github.io/copia/sucesso.html",
+                failure: "https://seniorpentest.github.io/copia/index.html",
+                pending: "https://seniorpentest.github.io/copia/sucesso.html"
             },
             auto_return: "approved"
         };
