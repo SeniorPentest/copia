@@ -29,6 +29,7 @@ if (MP_ACCESS_TOKEN) {
 
 // Rota de pagamento
 app.post('/api/checkout/preferences', async (req, res) => {
+    console.log('Payload recebido do front-end:', JSON.stringify(req.body, null, 2));
     try {
         const cartItems = req.body.items || [];
         
@@ -53,8 +54,12 @@ app.post('/api/checkout/preferences', async (req, res) => {
         
         return res.status(201).json({ id: result.id });
     } catch (error) {
+        const detailedMessage = error?.response?.data
+            ? JSON.stringify(error.response.data)
+            : error?.message || 'Falha ao criar preferência';
+
         console.error('Erro ao criar preferência:', error);
-        return res.status(500).json({ error: 'Falha ao criar preferência' });
+        return res.status(500).json({ error: detailedMessage });
     }
 });
 
