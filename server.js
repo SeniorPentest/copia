@@ -5,14 +5,24 @@ const cors = require('cors'); // Evita bloqueios entre o GitHub Pages e o Render
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const allowedOrigins = ['https://seniorpentest.github.io', 'http://localhost:3000'];
+const corsOptions = {
+    origin: allowedOrigins,
+    methods: ['POST', 'GET', 'OPTIONS']
+};
 
 // O teu Token de Produção
 const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN || 'APP_USR-5608582127627085-041401-3446175c6aa66616106541be83cd8612-1908343024';
 
 app.disable('x-powered-by');
-app.use(cors()); 
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
+
+// Health check
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date() });
+});
 
 // Inicialização do Mercado Pago (Versão 2)
 let client;
@@ -24,6 +34,7 @@ if (MP_ACCESS_TOKEN) {
 
 // Rota de pagamento
 app.post('/api/checkout/preferences', async (req, res) => {
+    console.log('Payload recebido do front-end:', JSON.stringify(req.body, null, 2));
     try {
         const cartItems = req.body.items || [];
         
@@ -36,9 +47,9 @@ app.post('/api/checkout/preferences', async (req, res) => {
                 currency_id: 'BRL'
             })),
             back_urls: {
-                success: "https://seniorpentest.github.io/copia/",
-                failure: "https://seniorpentest.github.io/copia/",
-                pending: "https://seniorpentest.github.io/copia/"
+                success: "https://seniorpentest.github.io/copia/sucesso.html",
+                failure: "https://seniorpentest.github.io/copia/index.html",
+                pending: "https://seniorpentest.github.io/copia/sucesso.html"
             },
             auto_return: "approved"
         };
@@ -48,8 +59,12 @@ app.post('/api/checkout/preferences', async (req, res) => {
         
         return res.status(201).json({ id: result.id });
     } catch (error) {
+        const detailedMessage = error?.response?.data
+            ? JSON.stringify(error.response.data)
+            : error?.message || 'Falha ao criar preferência';
+
         console.error('Erro ao criar preferência:', error);
-        return res.status(500).json({ error: 'Falha ao criar preferência' });
+        return res.status(500).json({ error: detailedMessage });
     }
 });
 
