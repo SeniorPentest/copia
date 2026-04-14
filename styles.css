@@ -369,6 +369,41 @@ select, input, textarea { font-family: inherit; }
 .hamburger.open span:nth-child(2) { opacity: 0; }
 .hamburger.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
+.cart-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    background: var(--beige);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--red);
+    font-weight: 700;
+    transition: var(--transition);
+}
+.cart-toggle:hover {
+    background: var(--beige-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+.cart-toggle:focus-visible {
+    outline: 3px solid rgba(196,41,42,.2);
+    outline-offset: 3px;
+}
+.cart-toggle-icon { font-size: 1rem; }
+.cart-toggle-label { font-size: .9rem; }
+.cart-count {
+    background: var(--red);
+    color: var(--white);
+    min-width: 26px;
+    text-align: center;
+    padding: 3px 6px;
+    border-radius: 99px;
+    font-size: .78rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
 /* ===========================
    HERO
 =========================== */
@@ -1444,6 +1479,179 @@ select, input, textarea { font-family: inherit; }
 }
 
 /* ===========================
+   CART
+=========================== */
+.cart-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition), visibility var(--transition);
+    z-index: 1300;
+}
+.cart-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+.cart-drawer {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: min(420px, 92vw);
+    background: var(--beige);
+    box-shadow: -14px 0 32px rgba(0,0,0,.14);
+    transform: translateX(100%);
+    transition: transform var(--transition);
+    z-index: 1400;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border);
+}
+.cart-drawer.open { transform: translateX(0); }
+.cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--beige);
+}
+.cart-kicker {
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.cart-header h3 {
+    font-size: 1.25rem;
+    color: var(--dark);
+}
+.cart-close {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--dark);
+}
+.cart-body {
+    padding: 18px 22px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.cart-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    padding: 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+.cart-item-info h4 {
+    font-size: .98rem;
+    color: var(--dark);
+    margin-bottom: 4px;
+}
+.cart-item-info span {
+    font-size: .86rem;
+    color: var(--muted);
+}
+.cart-qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--beige);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 4px 8px;
+}
+.cart-qty button {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 1px solid var(--border);
+    color: var(--dark);
+    font-weight: 700;
+}
+.cart-item-total {
+    font-weight: 800;
+    color: var(--red);
+    text-align: right;
+}
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.cart-remove {
+    background: transparent;
+    border: none;
+    color: var(--mid);
+    font-size: .95rem;
+}
+.cart-qty span {
+    min-width: 20px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--dark);
+}
+.cart-footer {
+    padding: 16px 22px 22px;
+    border-top: 1px solid var(--border);
+    background: var(--beige);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.cart-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1rem;
+    color: var(--dark);
+}
+.cart-total-row strong {
+    font-size: 1.3rem;
+    color: var(--red);
+}
+.cart-actions {
+    display: flex;
+    gap: 10px;
+}
+.cart-actions .btn-outline {
+    flex: 1;
+    justify-content: center;
+}
+.cart-actions .btn-primary {
+    flex: 1.3;
+    justify-content: center;
+}
+.cart-hint {
+    font-size: .82rem;
+    color: var(--muted);
+    text-align: center;
+}
+.cart-empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 30px 12px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    background: var(--white);
+}
+.btn-add-cart {
+    width: 100%;
+    justify-content: center;
+}
+.cart-open { overflow: hidden; }
+
+/* ===========================
    FLOATING WHATSAPP
 =========================== */
 .whatsapp-floating {
@@ -1549,6 +1757,18 @@ select, input, textarea { font-family: inherit; }
         height: 56px;
         right: 16px;
         bottom: 16px;
+    }
+
+    .cart-toggle {
+        order: 3;
+        margin-left: auto;
+        padding: 8px 12px;
+        gap: 6px;
+    }
+    .cart-toggle-label { display: none; }
+    .cart-drawer {
+        width: 100%;
+        border-left: none;
     }
 }
 
